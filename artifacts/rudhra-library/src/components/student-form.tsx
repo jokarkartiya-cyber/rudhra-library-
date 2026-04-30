@@ -83,6 +83,7 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
   const isEditing = !!student;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const createMutation = useCreateStudent();
   const updateMutation = useUpdateStudent();
@@ -137,7 +138,23 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
     e.target.value = "";
   };
 
+  const extractApiError = (err: unknown): string => {
+    const anyErr = err as {
+      response?: { data?: { error?: string; field?: string } };
+      message?: string;
+    };
+    const data = anyErr?.response?.data;
+    if (data?.field === "email") {
+      form.setError("email", { type: "server", message: data.error ?? "Email already exists." });
+    }
+    if (data?.field === "seatNumber") {
+      form.setError("seatNumber", { type: "server", message: data.error ?? "Seat already taken." });
+    }
+    return data?.error || anyErr?.message || "Something went wrong. Please try again.";
+  };
+
   const onSubmit = (data: FormValues) => {
+    setSubmitError(null);
     const formattedData = {
       ...data,
       photoUrl: data.photoUrl === "" ? null : data.photoUrl,
@@ -161,6 +178,7 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
             });
             onSuccess(res);
           },
+          onError: (err) => setSubmitError(extractApiError(err)),
         },
       );
     } else {
@@ -179,6 +197,7 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
             });
             onSuccess(res);
           },
+          onError: (err) => setSubmitError(extractApiError(err)),
         },
       );
     }
@@ -491,6 +510,15 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
             )}
           />
         </div>
+
+        {submitError && (
+          <div
+            role="alert"
+            className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          >
+            {submitError}
+          </div>
+        )}
 
         <div className="flex justify-end gap-2 pt-4 border-t">
           <Button
