@@ -79,7 +79,7 @@ export default function Landing() {
             </h1>
             <p className="text-lg md:text-xl text-white/90 font-medium max-w-2xl mx-auto">
               Premium reading and studying environment in Agra. Designed for academic excellence.
-              Founded by Ankit Kumar.
+              Founded by Ankul Kumar.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Button size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 text-lg px-8 h-14 rounded-full">
@@ -232,8 +232,7 @@ export default function Landing() {
                     <div>
                       <div className="font-bold text-lg mb-1 text-white">Phone</div>
                       <div className="flex flex-col space-y-1">
-                        <a href="tel:+919528335124" className="text-primary-foreground/80 hover:text-white transition-colors">+91 9528335124</a>
-                        <a href="tel:+917900799154" className="text-primary-foreground/80 hover:text-white transition-colors">+91 7900799154</a>
+                        <a href="tel:+917088830367" className="text-primary-foreground/80 hover:text-white transition-colors">+91 7088830367</a>
                       </div>
                     </div>
                   </div>
@@ -242,7 +241,7 @@ export default function Landing() {
               
               <div className="pt-8 border-t border-primary-foreground/20">
                 <div className="text-sm text-primary-foreground/80 mb-1">Owner & Founder</div>
-                <div className="text-xl font-serif font-bold text-white">Ankit Kumar</div>
+                <div className="text-xl font-serif font-bold text-white">Ankul Kumar</div>
               </div>
             </div>
             

@@ -222,8 +222,8 @@ export default function StudentDetail() {
                   
                   {/* Footer */}
                   <div className="absolute bottom-0 w-full h-4 bg-slate-950 flex justify-between items-center px-2 text-[6px] md:text-[8px] text-slate-400">
-                    <span>Ankit Kumar</span>
-                    <span>+91 9528335124</span>
+                    <span>Ankul Kumar</span>
+                    <span>+91 7088830367</span>
                   </div>
                 </div>
               </CardContent>

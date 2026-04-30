@@ -10,7 +10,7 @@ export function SiteFooter() {
             A premium reading and studying environment designed for deep focus and academic excellence.
           </p>
           <div className="text-sm font-medium">
-            Owner: <span className="text-primary">Ankit Kumar</span>
+            Owner: <span className="text-primary">Ankul Kumar</span>
           </div>
         </div>
         
@@ -19,11 +19,7 @@ export function SiteFooter() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
               <Phone className="h-4 w-4" />
-              <a href="tel:+919528335124" className="hover:text-primary transition-colors">+91 9528335124</a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Phone className="h-4 w-4" />
-              <a href="tel:+917900799154" className="hover:text-primary transition-colors">+91 7900799154</a>
+              <a href="tel:+917088830367" className="hover:text-primary transition-colors">+91 7088830367</a>
             </li>
           </ul>
         </div>

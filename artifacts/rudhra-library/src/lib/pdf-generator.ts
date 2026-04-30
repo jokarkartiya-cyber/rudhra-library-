@@ -167,9 +167,9 @@ export async function generateStudentCard(student: Student) {
 
   doc.setTextColor(200, 200, 200);
   doc.setFontSize(8);
-  doc.text("Owner: Ankit Kumar", 10, height - 6);
+  doc.text("Owner: Ankul Kumar", 10, height - 6);
   doc.text(
-    "Phone: +91 9528335124, +91 7900799154",
+    "Phone: +91 7088830367",
     width - 10,
     height - 6,
     { align: "right" },

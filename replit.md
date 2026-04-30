@@ -2,7 +2,7 @@
 
 ## Overview
 
-Rudhra Library is a premium study library website for the library owned by Ankit Kumar in Agra, Uttar Pradesh. The site has a public landing page, an admin dashboard for managing students and fees, a card verification page used at the library entrance, and downloadable PDF student ID cards.
+Rudhra Library is a premium study library website for the library owned by Ankul Kumar in Agra, Uttar Pradesh. The site has a public landing page, an admin dashboard for managing students and fees, a card verification page used at the library entrance, and downloadable PDF student ID cards.
 
 ## Stack
 
@@ -23,8 +23,8 @@ Rudhra Library is a premium study library website for the library owned by Ankit
 ## Domain
 
 - Library name: Rudhra Library
-- Owner: Ankit Kumar
-- Phone: +91 9528335124, +91 7900799154
+- Owner: Ankul Kumar
+- Phone: +91 7088830367
 - Location: Agra, Uttar Pradesh (lat 27.0032965, lng 78.5823932)
 - Shifts: Morning, Afternoon, Evening, Night, Full Day
 
