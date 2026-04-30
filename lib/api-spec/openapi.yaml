@@ -3,20 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Rudhra Library API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: students
+    description: Student management
+  - name: stats
+    description: Library statistics
+  - name: Storage
+    description: Object storage upload and serving endpoints.
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,230 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /students:
+    get:
+      operationId: listStudents
+      tags: [students]
+      summary: List all students
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          required: false
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, expired, all]
+          required: false
+      responses:
+        "200":
+          description: List of students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+    post:
+      operationId: createStudent
+      tags: [students]
+      summary: Create a student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateStudent"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+  /students/{id}:
+    get:
+      operationId: getStudent
+      tags: [students]
+      summary: Get a student
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Student
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    put:
+      operationId: updateStudent
+      tags: [students]
+      summary: Update a student
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateStudent"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+    delete:
+      operationId: deleteStudent
+      tags: [students]
+      summary: Delete a student
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+  /students/verify/{cardId}:
+    get:
+      operationId: verifyStudentCard
+      tags: [students]
+      summary: Verify a student by their card ID
+      parameters:
+        - in: path
+          name: cardId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CardVerification"
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      summary: Request a presigned URL for file upload
+      description: |
+        Returns a presigned GCS URL for direct upload. The client sends JSON
+        metadata here, then uploads the file directly to the returned URL.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadUrlRequest'
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadUrlResponse'
+        '400':
+          description: Missing or invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Failed to generate upload URL.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /storage/public-objects/{filePath}:
+    get:
+      tags: [Storage]
+      operationId: getPublicObject
+      summary: Serve a public asset from PUBLIC_OBJECT_SEARCH_PATHS
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object content streamed with correct Content-Type.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /storage/objects/{objectPath}:
+    get:
+      tags: [Storage]
+      operationId: getStorageObject
+      summary: Serve an object entity from PRIVATE_OBJECT_DIR
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object content streamed with correct Content-Type.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Object not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /stats/overview:
+    get:
+      operationId: getStatsOverview
+      tags: [stats]
+      summary: Library overview stats
+      responses:
+        "200":
+          description: Overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsOverview"
+  /stats/recent-students:
+    get:
+      operationId: getRecentStudents
+      tags: [stats]
+      summary: Recently joined students
+      responses:
+        "200":
+          description: Recent students
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
 components:
   schemas:
     HealthStatus:
@@ -31,6 +260,205 @@ components:
       properties:
         status:
           type: string
+      required: [status]
+    Student:
+      type: object
+      properties:
+        id:
+          type: integer
+        cardId:
+          type: string
+        name:
+          type: string
+        fatherName:
+          type: string
+          nullable: true
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        seatNumber:
+          type: string
+          nullable: true
+        shift:
+          type: string
+        joinDate:
+          type: string
+          format: date
+        validUntil:
+          type: string
+          format: date
+        feesPaid:
+          type: integer
+        feesAmount:
+          type: integer
+        status:
+          type: string
+          enum: [active, expired]
+        createdAt:
+          type: string
+          format: date-time
       required:
+        - id
+        - cardId
+        - name
+        - email
+        - phone
+        - address
+        - shift
+        - joinDate
+        - validUntil
+        - feesPaid
+        - feesAmount
         - status
-
+        - createdAt
+    CreateStudent:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+        fatherName:
+          type: string
+          nullable: true
+        email:
+          type: string
+        phone:
+          type: string
+          minLength: 10
+        address:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        seatNumber:
+          type: string
+          nullable: true
+        shift:
+          type: string
+          enum: [Morning, Afternoon, Evening, Night, Full Day]
+        joinDate:
+          type: string
+          format: date
+        validUntil:
+          type: string
+          format: date
+        feesPaid:
+          type: integer
+        feesAmount:
+          type: integer
+      required:
+        - name
+        - email
+        - phone
+        - address
+        - shift
+        - joinDate
+        - validUntil
+        - feesPaid
+        - feesAmount
+    UpdateStudent:
+      type: object
+      properties:
+        name:
+          type: string
+        fatherName:
+          type: string
+          nullable: true
+        email:
+          type: string
+        phone:
+          type: string
+        address:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        seatNumber:
+          type: string
+          nullable: true
+        shift:
+          type: string
+        joinDate:
+          type: string
+          format: date
+        validUntil:
+          type: string
+          format: date
+        feesPaid:
+          type: integer
+        feesAmount:
+          type: integer
+    CardVerification:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        student:
+          $ref: "#/components/schemas/Student"
+          nullable: true
+        message:
+          type: string
+      required: [valid, message]
+    StatsOverview:
+      type: object
+      properties:
+        totalStudents:
+          type: integer
+        activeStudents:
+          type: integer
+        expiredStudents:
+          type: integer
+        totalRevenue:
+          type: integer
+        shiftBreakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              shift:
+                type: string
+              count:
+                type: integer
+            required: [shift, count]
+      required:
+        - totalStudents
+        - activeStudents
+        - expiredStudents
+        - totalRevenue
+        - shiftBreakdown
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        size:
+          type: integer
+          minimum: 1
+        contentType:
+          type: string
+          minLength: 1
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+          format: uri
+        objectPath:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/UploadUrlRequest'
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
