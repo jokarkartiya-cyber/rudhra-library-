@@ -133,6 +133,33 @@ export async function generateStudentCard(student: Student) {
     detailsX,
     currentY,
   );
+  currentY += lineHeight;
+
+  // Fees summary on the card
+  const totalFees = Number(student.feesAmount) || 0;
+  const paidFees = Number(student.feesPaid) || 0;
+  const pendingFees = Math.max(0, totalFees - paidFees);
+
+  doc.text(
+    `Fees: Rs. ${totalFees}  |  Paid: Rs. ${paidFees}`,
+    detailsX,
+    currentY,
+  );
+  currentY += lineHeight;
+
+  if (pendingFees > 0) {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(254, 215, 170);
+    doc.text(`Pending: Rs. ${pendingFees}`, detailsX, currentY);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "normal");
+  } else {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(187, 247, 208);
+    doc.text("Fees: Fully Paid", detailsX, currentY);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "normal");
+  }
 
   // Footer
   doc.setFillColor(15, 23, 42);

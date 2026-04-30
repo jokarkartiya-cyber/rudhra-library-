@@ -44,26 +44,57 @@ import {
 } from "@workspace/api-client-react";
 import { queryClient } from "@/lib/queryClient";
 
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters."),
-  fatherName: z.string().optional(),
-  email: z.string().email("Invalid email address."),
-  phone: z.string().min(10, "Phone must be at least 10 characters."),
-  address: z.string().min(5, "Address must be at least 5 characters."),
-  photoUrl: z.string().optional().or(z.literal("")),
-  seatNumber: z.string().optional(),
-  shift: z.enum([
-    CreateStudentShift.Morning,
-    CreateStudentShift.Afternoon,
-    CreateStudentShift.Evening,
-    CreateStudentShift.Night,
-    CreateStudentShift.Full_Day,
-  ]),
-  joinDate: z.date(),
-  validUntil: z.date(),
-  feesAmount: z.coerce.number().min(0, "Fees must be 0 or more"),
-  feesPaid: z.coerce.number().min(0, "Paid amount must be 0 or more"),
-});
+const formSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, "Name must be at least 2 characters.")
+      .regex(/^[^<>]*$/, "Name contains invalid characters."),
+    fatherName: z
+      .string()
+      .regex(/^[^<>]*$/, "Father's name contains invalid characters.")
+      .optional(),
+    email: z.string().email("Invalid email address."),
+    phone: z
+      .string()
+      .regex(/^[0-9]{10,15}$/, "Phone must be 10-15 digits with no spaces or symbols."),
+    address: z
+      .string()
+      .min(5, "Address must be at least 5 characters.")
+      .regex(/^[^<>]*$/, "Address contains invalid characters."),
+    photoUrl: z.string().optional().or(z.literal("")),
+    seatNumber: z
+      .string()
+      .max(20, "Seat number is too long.")
+      .optional(),
+    shift: z.enum([
+      CreateStudentShift.Morning,
+      CreateStudentShift.Afternoon,
+      CreateStudentShift.Evening,
+      CreateStudentShift.Night,
+      CreateStudentShift.Full_Day,
+    ]),
+    joinDate: z.date(),
+    validUntil: z.date(),
+    feesAmount: z.coerce
+      .number()
+      .int("Fees must be a whole number.")
+      .min(0, "Fees must be 0 or more.")
+      .max(1_000_000, "Fees cannot exceed 10,00,000."),
+    feesPaid: z.coerce
+      .number()
+      .int("Paid amount must be a whole number.")
+      .min(0, "Paid amount must be 0 or more.")
+      .max(1_000_000, "Paid amount cannot exceed 10,00,000."),
+  })
+  .refine((data) => data.feesPaid <= data.feesAmount, {
+    message: "Paid amount cannot be more than the total fees.",
+    path: ["feesPaid"],
+  })
+  .refine((data) => data.validUntil >= data.joinDate, {
+    message: "Valid-Until date cannot be before the Join date.",
+    path: ["validUntil"],
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
