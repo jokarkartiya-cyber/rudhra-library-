@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { 
@@ -12,7 +12,10 @@ import {
   Eye,
   Edit,
   Trash2,
-  Download
+  Download,
+  Lock,
+  LogOut,
+  BookOpen
 } from "lucide-react";
 import { 
   PieChart, 
@@ -75,7 +78,84 @@ import { useDebounce } from "@/hooks/use-debounce";
 
 const COLORS = ['#1e3a8a', '#d97706', '#0d9488', '#b91c1c', '#6d28d9'];
 
+const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
+
+function AdminLogin({ onLogin }: { onLogin: () => void }) {
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${BASE}/api/auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        onLogin();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Galat password hai.");
+      }
+    } catch {
+      setError("Server se connect nahi ho paya. Dobara try karo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm space-y-6">
+        <div className="text-center space-y-2">
+          <div className="flex justify-center">
+            <div className="bg-primary/10 p-4 rounded-full">
+              <BookOpen className="h-10 w-10 text-primary" />
+            </div>
+          </div>
+          <h1 className="font-serif text-2xl font-bold">Rudhra Library</h1>
+          <p className="text-muted-foreground text-sm">Admin access required</p>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="password"
+              placeholder="Password daalo..."
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              autoFocus
+              required
+            />
+          </div>
+          {error && (
+            <p className="text-sm text-destructive text-center">{error}</p>
+          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold hover:bg-primary/90 transition disabled:opacity-60"
+          >
+            {loading ? "Checking..." : "Login"}
+          </button>
+        </form>
+        <p className="text-center text-xs text-muted-foreground">
+          <Link href="/" className="hover:underline">← Back to website</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
   const [status, setStatus] = useState<ListStudentsStatus>(ListStudentsStatus.all);
@@ -84,6 +164,33 @@ export default function Admin() {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   
   const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
+
+  useEffect(() => {
+    fetch(`${BASE}/api/auth/me`, { credentials: "include" })
+      .then(r => r.json())
+      .then((d: { isAdmin?: boolean }) => {
+        setIsAdmin(!!d.isAdmin);
+        setAuthChecked(true);
+      })
+      .catch(() => setAuthChecked(true));
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch(`${BASE}/api/auth/logout`, { method: "POST", credentials: "include" });
+    setIsAdmin(false);
+  };
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return <AdminLogin onLogin={() => setIsAdmin(true)} />;
+  }
 
   const { data: stats, isLoading: statsLoading } = useGetStatsOverview();
   const { data: recent, isLoading: recentLoading } = useGetRecentStudents();
@@ -139,10 +246,15 @@ export default function Admin() {
             <h1 className="font-serif text-3xl font-bold tracking-tight">Admin Dashboard</h1>
             <p className="text-muted-foreground mt-1">Manage students, shifts, and library operations.</p>
           </div>
-          <Button size="lg" className="bg-primary" onClick={() => setIsAddFormOpen(true)}>
-            <Plus className="mr-2 h-5 w-5" />
-            Add New Student
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button size="lg" className="bg-primary" onClick={() => setIsAddFormOpen(true)}>
+              <Plus className="mr-2 h-5 w-5" />
+              Add New Student
+            </Button>
+            <Button variant="outline" size="lg" onClick={handleLogout} title="Logout">
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Stats Grid */}

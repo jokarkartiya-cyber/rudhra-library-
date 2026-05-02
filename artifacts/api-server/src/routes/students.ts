@@ -15,6 +15,7 @@ import {
   VerifyStudentCardResponse,
 } from "@workspace/api-zod";
 import { generateCardId } from "../lib/cardId";
+import { requireAdmin } from "../middleware/auth";
 
 const router: IRouter = Router();
 
@@ -128,7 +129,7 @@ function withStatus(row: StudentRow) {
   };
 }
 
-router.get("/students", async (req, res): Promise<void> => {
+router.get("/students", requireAdmin, async (req, res): Promise<void> => {
   const parsed = ListStudentsQueryParams.safeParse(req.query);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -171,7 +172,7 @@ function firstZodIssue(err: { issues?: Array<{ path?: Array<string | number>; me
   return { field: path, message: issue?.message || "Invalid input." };
 }
 
-router.post("/students", async (req, res): Promise<void> => {
+router.post("/students", requireAdmin, async (req, res): Promise<void> => {
   const parsed = CreateStudentBody.safeParse(req.body);
   if (!parsed.success) {
     const { field, message } = firstZodIssue(parsed.error);
@@ -311,7 +312,7 @@ router.get("/students/verify/:cardId", async (req, res): Promise<void> => {
   );
 });
 
-router.get("/students/:id", async (req, res): Promise<void> => {
+router.get("/students/:id", requireAdmin, async (req, res): Promise<void> => {
   const params = GetStudentParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -328,7 +329,7 @@ router.get("/students/:id", async (req, res): Promise<void> => {
   res.json(GetStudentResponse.parse(withStatus(row)));
 });
 
-router.put("/students/:id", async (req, res): Promise<void> => {
+router.put("/students/:id", requireAdmin, async (req, res): Promise<void> => {
   const params = UpdateStudentParams.safeParse(req.params);
   if (!params.success) {
     const { field, message } = firstZodIssue(params.error);
@@ -461,7 +462,7 @@ router.put("/students/:id", async (req, res): Promise<void> => {
   }
 });
 
-router.delete("/students/:id", async (req, res): Promise<void> => {
+router.delete("/students/:id", requireAdmin, async (req, res): Promise<void> => {
   const params = DeleteStudentParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });

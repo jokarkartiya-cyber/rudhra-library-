@@ -5,6 +5,7 @@ import {
   GetStatsOverviewResponse,
   GetRecentStudentsResponse,
 } from "@workspace/api-zod";
+import { requireAdmin } from "../middleware/auth";
 
 const router: IRouter = Router();
 
@@ -35,7 +36,7 @@ function withStatus(row: typeof studentsTable.$inferSelect) {
   };
 }
 
-router.get("/stats/overview", async (_req, res): Promise<void> => {
+router.get("/stats/overview", requireAdmin, async (_req, res): Promise<void> => {
   const all = await db.select().from(studentsTable);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -65,7 +66,7 @@ router.get("/stats/overview", async (_req, res): Promise<void> => {
   );
 });
 
-router.get("/stats/recent-students", async (_req, res): Promise<void> => {
+router.get("/stats/recent-students", requireAdmin, async (_req, res): Promise<void> => {
   const rows = await db
     .select()
     .from(studentsTable)
