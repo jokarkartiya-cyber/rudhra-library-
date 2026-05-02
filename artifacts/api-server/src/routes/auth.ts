@@ -40,6 +40,7 @@ router.post("/auth/logout", (req, res) => {
 });
 
 router.get("/auth/me", (req, res) => {
+  res.set("Cache-Control", "no-store");
   res.json({ isAdmin: !!req.session?.isAdmin });
 });
 
