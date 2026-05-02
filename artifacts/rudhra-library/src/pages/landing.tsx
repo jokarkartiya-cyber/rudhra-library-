@@ -18,6 +18,8 @@ const shifts = [
 
 export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
+  const [logoClicks, setLogoClicks] = useState(0);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -25,12 +27,26 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (logoClicks === 0) return;
+    if (logoClicks >= 5) {
+      setShowAdmin(true);
+      setLogoClicks(0);
+      return;
+    }
+    const timer = setTimeout(() => setLogoClicks(0), 2000);
+    return () => clearTimeout(timer);
+  }, [logoClicks]);
+
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
       {/* Immersive Header */}
       <header className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-background/95 backdrop-blur-md border-b shadow-sm py-3" : "bg-transparent py-5"}`}>
         <div className="container mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2 cursor-pointer select-none"
+            onClick={() => setLogoClicks(c => c + 1)}
+          >
             <BookOpen className={`h-8 w-8 ${scrolled ? "text-primary" : "text-white"}`} />
             <span className={`font-serif font-bold text-xl tracking-tight ${scrolled ? "text-foreground" : "text-white"}`}>
               Rudhra Library
@@ -42,6 +58,13 @@ export default function Landing() {
                 Verify Card
               </Button>
             </Link>
+            {showAdmin && (
+              <Link href="/admin">
+                <Button className={scrolled ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-white text-primary hover:bg-white/90"}>
+                  Admin Login
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </header>
