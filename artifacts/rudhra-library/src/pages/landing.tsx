@@ -42,11 +42,6 @@ export default function Landing() {
                 Verify Card
               </Button>
             </Link>
-            <Link href="/admin">
-              <Button className={scrolled ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-white text-primary hover:bg-white/90"}>
-                Admin Login
-              </Button>
-            </Link>
           </div>
         </div>
       </header>
