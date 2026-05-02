@@ -175,6 +175,23 @@ export default function Admin() {
       .catch(() => setAuthChecked(true));
   }, []);
 
+  const { data: stats, isLoading: statsLoading } = useGetStatsOverview();
+  const { data: recent, isLoading: recentLoading } = useGetRecentStudents();
+
+  const { data: students, isLoading: studentsLoading } = useListStudents({
+    search: debouncedSearch,
+    status: status === ListStudentsStatus.all ? undefined : status
+  }, {
+    query: {
+      queryKey: getListStudentsQueryKey({
+        search: debouncedSearch,
+        status: status === ListStudentsStatus.all ? undefined : status
+      })
+    }
+  });
+
+  const deleteMutation = useDeleteStudent();
+
   const handleLogout = async () => {
     await fetch(`${BASE}/api/auth/logout`, { method: "POST", credentials: "include" });
     setIsAdmin(false);
@@ -191,23 +208,6 @@ export default function Admin() {
   if (!isAdmin) {
     return <AdminLogin onLogin={() => setIsAdmin(true)} />;
   }
-
-  const { data: stats, isLoading: statsLoading } = useGetStatsOverview();
-  const { data: recent, isLoading: recentLoading } = useGetRecentStudents();
-  
-  const { data: students, isLoading: studentsLoading } = useListStudents({ 
-    search: debouncedSearch, 
-    status: status === ListStudentsStatus.all ? undefined : status 
-  }, {
-    query: {
-      queryKey: getListStudentsQueryKey({ 
-        search: debouncedSearch, 
-        status: status === ListStudentsStatus.all ? undefined : status 
-      })
-    }
-  });
-
-  const deleteMutation = useDeleteStudent();
 
   const handleDelete = () => {
     if (!studentToDelete) return;
