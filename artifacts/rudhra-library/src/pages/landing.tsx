@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import heroImg from "@/assets/hero.png";
 import booksImg from "@/assets/books.png";
 import cubicleImg from "@/assets/cubicle.png";
+import logoImg from "@/assets/rudhra-logo.png";
 
 const shifts = [
   { name: "Morning", time: "6 AM - 10 AM", desc: "Start your day with deep, uninterrupted focus." },
@@ -47,7 +48,7 @@ export default function Landing() {
             className="flex items-center gap-2 cursor-pointer select-none"
             onClick={() => setLogoClicks(c => c + 1)}
           >
-            <BookOpen className={`h-8 w-8 ${scrolled ? "text-primary" : "text-white"}`} />
+            <img src={logoImg} alt="Rudhra Library logo" className="h-9 w-9 rounded-full object-cover" />
             <span className={`font-serif font-bold text-xl tracking-tight ${scrolled ? "text-foreground" : "text-white"}`}>
               Rudhra Library
             </span>

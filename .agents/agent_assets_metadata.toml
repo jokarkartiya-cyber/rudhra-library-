@@ -18,3 +18,9 @@ id = "3dw7ya4W-9OxtC7NoTRd-"
 uri = "file://artifacts/rudhra-library/src/assets/books.png"
 type = "image"
 title = "Books and light"
+
+[[generated]]
+id = "du6j_YX2TlBi2Vf3guMrW"
+uri = "file://artifacts/rudhra-library/src/assets/rudhra-logo.png"
+type = "image"
+title = "Rudhra Library logo"
