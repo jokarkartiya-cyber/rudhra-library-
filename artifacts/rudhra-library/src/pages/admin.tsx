@@ -60,6 +60,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import logoImg from "@/assets/rudhra-logo.png";
 
 import { 
   useGetStatsOverview, 
@@ -114,9 +115,7 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center space-y-2">
           <div className="flex justify-center">
-            <div className="bg-primary/10 p-4 rounded-full">
-              <BookOpen className="h-10 w-10 text-primary" />
-            </div>
+            <img src={logoImg} alt="Rudhra Library logo" className="h-20 w-20 rounded-full object-cover shadow-md" />
           </div>
           <h1 className="font-serif text-2xl font-bold">Rudhra Library</h1>
           <p className="text-muted-foreground text-sm">Admin access required</p>

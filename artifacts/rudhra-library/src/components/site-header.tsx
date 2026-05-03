@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { ThemeToggle } from "./theme-toggle";
-import { BookOpen } from "lucide-react";
+import logoImg from "@/assets/rudhra-logo.png";
 
 export function SiteHeader() {
   return (
@@ -8,7 +8,7 @@ export function SiteHeader() {
       <div className="container flex h-16 items-center mx-auto px-4 md:px-6">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <BookOpen className="h-6 w-6 text-primary" />
+            <img src={logoImg} alt="Rudhra Library logo" className="h-6 w-6 rounded-full object-cover" />
             <span className="hidden font-serif font-bold sm:inline-block">
               Rudhra Library
             </span>
@@ -33,7 +33,7 @@ export function SiteHeader() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none md:hidden">
             <Link href="/" className="mr-6 flex items-center space-x-2">
-              <BookOpen className="h-5 w-5 text-primary" />
+              <img src={logoImg} alt="Rudhra Library logo" className="h-5 w-5 rounded-full object-cover" />
               <span className="font-serif font-bold inline-block">
                 Rudhra Library
               </span>
