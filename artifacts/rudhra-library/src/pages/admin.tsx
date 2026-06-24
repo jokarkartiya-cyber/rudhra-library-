@@ -15,7 +15,8 @@ import {
   Download,
   Lock,
   LogOut,
-  BookOpen
+  BookOpen,
+  MessageSquare
 } from "lucide-react";
 import { 
   PieChart, 
@@ -246,6 +247,12 @@ export default function Admin() {
             <p className="text-muted-foreground mt-1">Manage students, shifts, and library operations.</p>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/admin/announcements">
+              <Button variant="outline" size="lg">
+                <MessageSquare className="mr-2 h-5 w-5" />
+                Announcements
+              </Button>
+            </Link>
             <Button size="lg" className="bg-primary" onClick={() => setIsAddFormOpen(true)}>
               <Plus className="mr-2 h-5 w-5" />
               Add New Student

@@ -1,14 +1,24 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 
 declare module "express-session" {
   interface SessionData {
     isAdmin?: boolean;
+    loginAttempts?: number;
   }
 }
 
 const router = Router();
 
-router.post("/auth/login", (req, res) => {
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  message: { error: "Bahut zyada attempts. 15 minute baad try karo." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.post("/auth/login", loginLimiter, (req, res) => {
   const { password } = req.body as { password?: string };
   const adminPassword = process.env["ADMIN_PASSWORD"];
 
@@ -18,6 +28,8 @@ router.post("/auth/login", (req, res) => {
   }
 
   if (!password || password !== adminPassword) {
+    const ip = req.ip || req.socket?.remoteAddress || "unknown";
+    req.log.warn({ ip }, "Failed login attempt");
     res.status(401).json({ error: "Galat password hai. Dobara try karo." });
     return;
   }

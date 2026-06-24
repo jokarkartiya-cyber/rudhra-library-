@@ -229,10 +229,10 @@ router.post("/students", requireAdmin, async (req, res): Promise<void> => {
   }
 
   const year = new Date().getFullYear();
-  const [{ count }] = await db
-    .select({ count: sql<number>`count(*)::int` })
+  const [{ maxSeq }] = await db
+    .select({ maxSeq: sql<number>`COALESCE(MAX(CAST(SPLIT_PART(card_id, '-', 3) AS INTEGER)), 0)` })
     .from(studentsTable);
-  const cardId = generateCardId(year, Number(count) + 1);
+  const cardId = generateCardId(year, maxSeq + 1);
 
   try {
     const [row] = await db
@@ -264,7 +264,14 @@ router.post("/students", requireAdmin, async (req, res): Promise<void> => {
       });
       return;
     }
-    throw err;
+    if (message.includes("students_card_id_unique")) {
+      res.status(409).json({
+        error: "Card ID conflict. Please try again.",
+        field: "cardId",
+      });
+      return;
+    }
+    res.status(500).json({ error: message });
   }
 });
 

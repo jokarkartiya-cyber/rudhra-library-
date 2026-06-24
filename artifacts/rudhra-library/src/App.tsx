@@ -7,6 +7,7 @@ import { queryClient } from "@/lib/queryClient";
 
 import Landing from "@/pages/landing";
 import Admin from "@/pages/admin";
+import AdminAnnouncements from "@/pages/admin-announcements";
 import StudentDetail from "@/pages/student-detail";
 import Verify from "@/pages/verify";
 import NotFound from "@/pages/not-found";
@@ -16,6 +17,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Landing} />
       <Route path="/admin" component={Admin} />
+      <Route path="/admin/announcements" component={AdminAnnouncements} />
       <Route path="/admin/students/:id" component={StudentDetail} />
       <Route path="/verify" component={Verify} />
       <Route component={NotFound} />

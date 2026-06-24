@@ -21,6 +21,12 @@ export function SiteHeader() {
               Admin
             </Link>
             <Link
+              href="/admin/files"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Files
+            </Link>
+            <Link
               href="/verify"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
@@ -46,6 +52,12 @@ export function SiteHeader() {
                 className="text-sm transition-colors hover:text-foreground/80 text-foreground/60"
               >
                 Admin
+              </Link>
+              <Link
+                href="/admin/files"
+                className="text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              >
+                Files
               </Link>
               <Link
                 href="/verify"

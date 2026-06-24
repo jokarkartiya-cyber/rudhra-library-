@@ -37,6 +37,17 @@ yarn-error.log
 testem.log
 /typings
 
+# secrets - contain DB passwords, admin passwords
+start-api.bat
+start-api.ps1
+start-frontend.bat
+start-frontend.ps1
+scripts/*
+
+# local photo storage - keep directory, ignore files
+data/objects/*
+!data/objects/.gitkeep
+
 # System Files
 .DS_Store
 Thumbs.db
@@ -44,6 +55,3 @@ Thumbs.db
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
 
-# Replit
-.cache/
-.local/

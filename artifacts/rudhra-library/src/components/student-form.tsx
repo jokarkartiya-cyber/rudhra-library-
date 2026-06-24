@@ -156,8 +156,8 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
       e.target.value = "";
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadError("Image must be 5 MB or smaller.");
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError("Image must be 10 MB or smaller.");
       e.target.value = "";
       return;
     }
@@ -300,7 +300,7 @@ export function StudentForm({ student, onSuccess, onCancel }: StudentFormProps) 
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    JPG or PNG, up to 5 MB. Used on the student ID card.
+                    JPG or PNG, up to 10 MB. Used on the student ID card.
                   </p>
                   {uploadError && (
                     <p className="text-xs text-destructive">{uploadError}</p>
