@@ -271,7 +271,8 @@ router.post("/students", requireAdmin, async (req, res): Promise<void> => {
       });
       return;
     }
-    res.status(500).json({ error: message });
+    req.log.error({ err }, "Unexpected error creating student");
+    res.status(500).json({ error: "Something went wrong. Please try again." });
   }
 });
 
