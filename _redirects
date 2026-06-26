@@ -1,0 +1,5 @@
+# API proxy to Render
+/api/*  https://rudhra-library.onrender.com/api/:splat  200
+
+# SPA fallback - all routes serve index.html
+/*  /index.html  200
