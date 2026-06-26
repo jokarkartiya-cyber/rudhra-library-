@@ -4,6 +4,8 @@ import helmet from "helmet";
 import pinoHttp from "pino-http";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import path from "path";
+import fs from "fs";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -83,5 +85,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+const frontendDir = path.resolve(__dirname, "..", "..", "..", "artifacts", "rudhra-library", "dist", "public");
+if (process.env["NODE_ENV"] === "production" && fs.existsSync(frontendDir)) {
+  app.use(express.static(frontendDir));
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(frontendDir, "index.html"));
+  });
+}
 
 export default app;
