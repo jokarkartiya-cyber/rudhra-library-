@@ -47,6 +47,7 @@ scripts/*
 # local photo storage - keep directory, ignore files
 data/objects/*
 !data/objects/.gitkeep
+artifacts/api-server/data/
 
 # System Files
 .DS_Store
